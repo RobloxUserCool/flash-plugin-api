@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flash Plugin API</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 25px;
+    background: #090d19;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 650px;
+    margin: 50px auto;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+.subtitle {
+    color: #929bb2;
+}
+
+.panel {
+    background: #121a2c;
+    border: 1px solid #25334f;
+    border-radius: 18px;
+    padding: 24px;
+    margin-top: 25px;
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(100deg, #2878ff, #884bff);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: .6;
+}
+
+.key {
+    margin-top: 20px;
+    padding: 15px;
+    background: #080e1c;
+    border: 1px solid #293955;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+    color: #83b4ff;
+    display: none;
+}
+
+.copy {
+    margin-top: 12px;
+    background: #263550;
+    display: none;
+}
+
+.status {
+    margin-top: 15px;
+    color: #929bb2;
+    font-size: 14px;
+}
+
+.info {
+    color: #8995ad;
+    font-size: 13px;
+    line-height: 1.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Flash Plugin API</h1>
+<p class="subtitle">API Key Management</p>
+
+<div class="panel">
+
+<h2>Generate API Key</h2>
+
+<p class="info">
+Create a unique API key for your application.
+Keep your key private.
+</p>
+
+<button id="generate" onclick="generateKey()">
+Generate API Key
+</button>
+
+<div class="key" id="key"></div>
+
+<button class="copy" id="copy" onclick="copyKey()">
+Copy API Key
+</button>
+
+<div class="status" id="status">System ready</div>
+
+</div>
+
+<div class="panel">
+<h3>API Information</h3>
+<p class="info">Service: Flash Plugin API</p>
+<p class="info">Version: 1.0.0</p>
+<p class="info">Database: PostgreSQL</p>
+<p class="info">Authentication: API Key</p>
+</div>
+
+</div>
+
+<script>
+const API = "https://flash-plugin-api.onrender.com";
+
+let currentKey = "";
+
+async function generateKey() {
+    const button = document.getElementById("generate");
+    const status = document.getElementById("status");
+
+    button.disabled = true;
+    button.textContent = "Generating...";
+    status.textContent = "Connecting to API...";
+
+    try {
+        const response = await fetch(API + "/api/keys/create", {
+            method: "POST"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Generation failed");
+        }
+
+        currentKey = data.api_key;
+
+        document.getElementById("key").textContent = currentKey;
+        document.getElementById("key").style.display = "block";
+        document.getElementById("copy").style.display = "block";
+
+        status.textContent = "API key successfully created";
+
+    } catch (error) {
+        status.textContent = "Error: " + error.message;
+    }
+
+    button.disabled = false;
+    button.textContent = "Generate API Key";
+}
+
+async function copyKey() {
+    if (!currentKey) return;
+
+    await navigator.clipboard.writeText(currentKey);
+
+    document.getElementById("status").textContent =
+        "API key copied!";
+}
+</script>
+
+</body>
+                                      </html>
