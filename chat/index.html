@@ -8,906 +8,479 @@
 
 <style>
 :root {
-    --bg: #09090f;
-    --panel: #10101b;
-    --panel2: #171725;
-    --border: #29283a;
-    --text: #f5f4ff;
-    --muted: #9291a8;
-    --accent: #7655ff;
-    --accent2: #c34cff;
-    --glow: rgba(118,85,255,.25);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: Inter, Arial, sans-serif;
-    overflow: hidden;
-    transition: background .35s, color .35s;
-}
-
-button, input, textarea {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-    color: inherit;
-}
-
-.app {
-    display: flex;
-    height: 100dvh;
-    width: 100%;
-    overflow: hidden;
-}
-
-/* SIDEBAR */
-
-.sidebar {
-    width: 260px;
-    min-width: 260px;
-    background: var(--panel);
-    border-right: 1px solid var(--border);
-    padding: 20px 14px;
-    display: flex;
-    flex-direction: column;
-    transition: transform .3s, background .3s;
-    z-index: 5;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 5px 8px 25px;
-}
-
-.logo-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    background: linear-gradient(135deg,var(--accent),var(--accent2));
-    box-shadow: 0 0 22px var(--glow);
-    font-size: 23px;
-    font-weight: 900;
-}
-
-.logo-name {
-    font-size: 21px;
-    font-weight: 800;
-    letter-spacing: -.7px;
-}
-
-.logo-name span {
-    color: var(--accent2);
-}
-
-.new-chat {
-    border: 1px solid var(--border);
-    background: var(--panel2);
-    border-radius: 13px;
-    padding: 13px;
-    text-align: left;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    font-size: 14px;
-    transition: .25s;
-}
-
-.new-chat:hover {
-    border-color: var(--accent);
-    background: var(--glow);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px var(--glow);
-}
-
-.new-chat:active {
-    transform: scale(.97);
-}
-
-.side-label {
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    margin: 27px 9px 12px;
-}
-
-.history {
-    flex: 1;
-    overflow-y: auto;
-}
-
-.history-item {
-    width: 100%;
-    border: 0;
-    background: transparent;
-    padding: 11px 10px;
-    border-radius: 9px;
-    color: var(--muted);
-    text-align: left;
-    font-size: 13px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    transition: .2s;
-}
-
-.history-item:hover,
-.history-item.active {
-    background: var(--panel2);
-    color: var(--text);
-}
-
-.sidebar-bottom {
-    border-top: 1px solid var(--border);
-    padding-top: 13px;
-}
-
-.settings-button {
-    width: 100%;
-    background: transparent;
-    border: 0;
-    padding: 12px;
-    border-radius: 10px;
-    text-align: left;
-    color: var(--muted);
-    transition: .2s;
-}
-
-.settings-button:hover {
-    background: var(--panel2);
-    color: var(--text);
-}
-
-/* MAIN */
-
-.main {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    background:
-        radial-gradient(ellipse at 50% 35%, var(--glow), transparent 55%),
-        var(--bg);
-    transition: background .35s;
-}
-
-.topbar {
-    height: 70px;
-    min-height: 70px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    background: rgba(10,10,18,.35);
-    backdrop-filter: blur(15px);
-}
-
-.top-left {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.menu-button {
-    display: none;
-    background: transparent;
-    border: 0;
-    font-size: 22px;
-}
-
-.chat-title {
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.model-status {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 4px;
-}
-
-.top-actions {
-    display: flex;
-    gap: 9px;
-}
-
-.icon-button {
-    width: 38px;
-    height: 38px;
-    border: 1px solid var(--border);
-    border-radius: 11px;
-    background: var(--panel);
-    display: grid;
-    place-items: center;
-    transition: .25s;
-}
-
-.icon-button:hover {
-    border-color: var(--accent);
-    color: var(--accent2);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 18px var(--glow);
-}
-
-.icon-button:active {
-    transform: scale(.9);
-}
-
-/* CHAT */
-
-.messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 30px 18px;
-    scroll-behavior: smooth;
-}
-
-.empty-state {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    animation: appear .7s ease;
-}
-
-.empty-logo {
-    width: 76px;
-    height: 76px;
-    border-radius: 24px;
-    display: grid;
-    place-items: center;
-    font-size: 43px;
-    font-weight: 900;
-    background: linear-gradient(135deg,var(--accent),var(--accent2));
-    box-shadow: 0 0 50px var(--glow);
-    margin-bottom: 25px;
-    animation: float 4s ease-in-out infinite;
-}
-
-.empty-state h1 {
-    font-size: clamp(25px,5vw,37px);
-    letter-spacing: -1.5px;
-    margin-bottom: 12px;
-}
-
-.empty-state h1 span {
-    background: linear-gradient(100deg,var(--accent),var(--accent2));
-    color: transparent;
-    background-clip: text;
-}
-
-.empty-state p {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.6;
-    max-width: 300px;
-}
-
-.message {
-    max-width: 760px;
-    margin: 0 auto 22px;
-    animation: messageIn .35s ease;
-}
-
-.message.user {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.bubble {
-    max-width: 85%;
-    padding: 14px 17px;
-    border-radius: 17px;
-    font-size: 14px;
-    line-height: 1.65;
-    overflow-wrap: anywhere;
-    white-space: pre-wrap;
-}
-
-.user .bubble {
-    background: linear-gradient(120deg,var(--accent),var(--accent2));
-    color: white;
-    border-bottom-right-radius: 5px;
-    box-shadow: 0 5px 22px var(--glow);
-}
-
-.assistant .bubble {
-    background: var(--panel2);
-    border: 1px solid var(--border);
-    border-bottom-left-radius: 5px;
-}
-
-.message-label {
-    color: var(--muted);
-    font-size: 11px;
-    margin-bottom: 7px;
-}
-
-/* INPUT */
-
-.input-area {
-    padding: 15px 20px 22px;
-    width: 100%;
-    max-width: 850px;
-    margin: 0 auto;
-}
-
-.input-box {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    padding: 10px;
-    border: 1px solid var(--border);
-    background: var(--panel);
-    border-radius: 18px;
-    transition: .25s;
-}
-
-.input-box:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--glow), 0 0 25px var(--glow);
-}
-
-#messageInput {
-    flex: 1;
-    min-width: 0;
-    max-height: 140px;
-    resize: none;
-    border: 0;
-    outline: 0;
-    color: var(--text);
-    background: transparent;
-    padding: 10px 8px;
-    font-size: 14px;
-}
-
-#messageInput::placeholder {
-    color: var(--muted);
-}
-
-.send-button {
-    width: 43px;
-    height: 43px;
-    flex-shrink: 0;
-    border: 0;
-    border-radius: 13px;
-    background: linear-gradient(135deg,var(--accent),var(--accent2));
-    display: grid;
-    place-items: center;
-    font-size: 20px;
-    font-weight: bold;
-    transition: .25s;
-    box-shadow: 0 4px 16px var(--glow);
-}
-
-.send-button:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 7px 25px var(--glow);
-}
-
-.send-button:active {
-    transform: scale(.88);
-}
-
-.disclaimer {
-    color: var(--muted);
-    text-align: center;
-    font-size: 10px;
-    margin-top: 12px;
-}
-
-/* SETTINGS MODAL */
-
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.65);
-    backdrop-filter: blur(9px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-    z-index: 20;
-}
-
-.overlay.show {
-    display: flex;
-    animation: fadeIn .2s ease;
-}
-
-.modal {
-    width: 100%;
-    max-width: 440px;
-    max-height: 90dvh;
-    overflow-y: auto;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 21px;
-    padding: 23px;
-    box-shadow: 0 20px 80px rgba(0,0,0,.5);
-    animation: modalIn .3s ease;
-}
-
-.modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 25px;
-}
-
-.modal-header h2 {
-    font-size: 20px;
-}
-
-.close-button {
-    background: var(--panel2);
-    border: 1px solid var(--border);
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    font-size: 18px;
-}
-
-.setting-title {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 13px;
-}
-
-.themes {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 11px;
-    margin-bottom: 26px;
-}
-
-.theme-option {
-    border: 1px solid var(--border);
-    background: var(--panel2);
-    border-radius: 13px;
-    padding: 12px;
-    text-align: left;
-    transition: .2s;
-}
-
-.theme-option:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent);
-}
-
-.theme-option.selected {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px var(--glow);
-}
-
-.theme-preview {
-    height: 31px;
-    border-radius: 7px;
-    margin-bottom: 9px;
-}
-
-.theme-option span {
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.theme-green .theme-preview {
-    background: linear-gradient(100deg,#00bd86,#934cff);
-}
-
-.theme-blue .theme-preview {
-    background: linear-gradient(100deg,#287cff,#994bff);
-}
-
-.theme-red .theme-preview {
-    background: linear-gradient(100deg,#ff4242,#ff9b38);
-}
-
-.theme-gray .theme-preview {
-    background: linear-gradient(100deg,#555,#c2c2c2);
-}
-
-.setting-note {
-    color: var(--muted);
-    font-size: 11px;
-    line-height: 1.6;
-}
-
-/* ANIMATIONS */
-
-@keyframes appear {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes messageIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes float {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-9px); }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes modalIn {
-    from { opacity: 0; transform: translateY(15px) scale(.97); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* MOBILE */
-
-@media (max-width: 650px) {
-    .sidebar {
-        position: fixed;
-        inset: 0 auto 0 0;
-        height: 100dvh;
-        transform: translateX(-105%);
-        box-shadow: 15px 0 50px rgba(0,0,0,.3);
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
-    }
-
-    .menu-button {
-        display: block;
-    }
-
-    .topbar {
-        padding: 0 14px;
-    }
-
-    .input-area {
-        padding: 12px 12px 18px;
-    }
-
-    .messages {
-        padding: 22px 13px;
-    }
+    --bg:#09090f;
+    --panel:#10101b;
+    --panel2:#171725;
+    --border:#29283a;
+    --text:#f5f4ff;
+    --muted:#9291a8;
+    --accent:#287cff;
+    --accent2:#994bff;
+    --glow:rgba(40,124,255,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{height:100dvh;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;overflow:hidden}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;color:inherit}
+.app{display:flex;height:100dvh}
+.sidebar{width:250px;min-width:250px;background:var(--panel);border-right:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;z-index:5}
+.logo{display:flex;align-items:center;gap:11px;padding:5px 8px 25px}
+.logo-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 22px var(--glow);font-size:25px;font-weight:bold}
+.logo-name{font-size:21px;font-weight:800}
+.logo-name span{color:var(--accent2)}
+.new-chat,.settings-button{width:100%;padding:13px;border:1px solid var(--border);border-radius:12px;background:var(--panel2);text-align:left;transition:.2s}
+.new-chat:hover,.settings-button:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 5px 20px var(--glow)}
+.side-label{color:var(--muted);font-size:11px;font-weight:bold;letter-spacing:1px;margin:25px 9px 10px}
+.history{flex:1;overflow-y:auto}
+.history-item{width:100%;padding:11px 10px;border:0;border-radius:9px;background:transparent;color:var(--muted);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+.history-item:hover,.history-item.active{background:var(--panel2);color:var(--text)}
+.sidebar-bottom{border-top:1px solid var(--border);padding-top:12px}
+.settings-button{border:0;background:transparent;color:var(--muted)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 35%,var(--glow),transparent 55%),var(--bg)}
+.topbar{height:68px;min-height:68px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+.top-left,.top-actions{display:flex;align-items:center;gap:12px}
+.chat-title{font-size:14px;font-weight:bold}
+.model-status{font-size:11px;color:var(--muted);margin-top:4px}
+.icon-button,.close-button{width:38px;height:38px;border:1px solid var(--border);border-radius:11px;background:var(--panel);transition:.2s}
+.icon-button:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 5px 18px var(--glow)}
+.menu-button{display:none;background:transparent;border:0;font-size:22px}
+.messages{flex:1;overflow-y:auto;padding:28px 16px;scroll-behavior:smooth}
+.empty-state{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;animation:appear .6s}
+.empty-logo{width:76px;height:76px;border-radius:24px;display:grid;place-items:center;font-size:43px;font-weight:bold;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 50px var(--glow);margin-bottom:25px;animation:float 4s infinite}
+.empty-state h1{font-size:clamp(25px,5vw,37px);margin-bottom:12px}
+.empty-state h1 span{background:linear-gradient(100deg,var(--accent),var(--accent2));color:transparent;background-clip:text}
+.empty-state p{color:var(--muted);font-size:14px;line-height:1.6;max-width:300px}
+.message{max-width:760px;margin:0 auto 22px;animation:messageIn .3s}
+.message.user{display:flex;justify-content:flex-end}
+.bubble{max-width:88%;padding:14px 17px;border-radius:17px;font-size:14px;line-height:1.65;overflow-wrap:anywhere;white-space:pre-wrap}
+.user .bubble{background:linear-gradient(120deg,var(--accent),var(--accent2));color:white;border-bottom-right-radius:5px}
+.assistant .bubble{background:var(--panel2);border:1px solid var(--border);border-bottom-left-radius:5px}
+.message-label{color:var(--muted);font-size:11px;margin-bottom:7px}
+.input-area{padding:14px 18px 20px;width:100%;max-width:850px;margin:0 auto}
+.input-box{display:flex;align-items:flex-end;gap:10px;padding:10px;border:1px solid var(--border);background:var(--panel);border-radius:18px;transition:.2s}
+.input-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+#messageInput{flex:1;min-width:0;max-height:140px;resize:none;border:0;outline:0;color:var(--text);background:transparent;padding:10px 8px;font-size:14px}
+#messageInput::placeholder{color:var(--muted)}
+.send-button{width:43px;height:43px;flex-shrink:0;border:0;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:21px;font-weight:bold;transition:.2s;box-shadow:0 4px 16px var(--glow)}
+.send-button:hover{transform:translateY(-3px) scale(1.05)}
+.send-button:active{transform:scale(.9)}
+.send-button:disabled{opacity:.5;cursor:wait}
+.disclaimer{text-align:center;color:var(--muted);font-size:10px;margin-top:11px}
+.overlay{position:fixed;inset:0;background:#000a;backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center;padding:14px;z-index:20}
+.overlay.show{display:flex;animation:fadeIn .2s}
+.modal{width:100%;max-width:460px;max-height:92dvh;overflow-y:auto;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 20px 80px #0008;animation:modalIn .25s}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.modal-header h2{font-size:20px}
+.close-button{font-size:20px}
+.section-title{font-size:13px;font-weight:bold;margin:20px 0 12px}
+.field-label{display:block;color:var(--muted);font-size:12px;margin:13px 0 7px}
+.field{width:100%;padding:12px;border:1px solid var(--border);border-radius:11px;background:var(--panel2);color:var(--text);outline:0;font-size:13px}
+.field:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--glow)}
+.field option{background:var(--panel)}
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.theme-option{border:1px solid var(--border);background:var(--panel2);border-radius:12px;padding:11px;text-align:left;transition:.2s}
+.theme-option:hover{transform:translateY(-2px);border-color:var(--accent)}
+.theme-option.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--glow)}
+.theme-preview{height:25px;border-radius:7px;margin-bottom:8px}
+.theme-option span{font-size:11px;font-weight:bold}
+.theme-green .theme-preview{background:linear-gradient(100deg,#00bd86,#934cff)}
+.theme-blue .theme-preview{background:linear-gradient(100deg,#287cff,#994bff)}
+.theme-red .theme-preview{background:linear-gradient(100deg,#ff4242,#ff9b38)}
+.theme-gray .theme-preview{background:linear-gradient(100deg,#555,#c2c2c2)}
+.primary-button{width:100%;padding:13px;border:0;border-radius:11px;background:linear-gradient(110deg,var(--accent),var(--accent2));font-weight:bold;margin-top:16px;transition:.2s}
+.primary-button:hover{transform:translateY(-2px);filter:brightness(1.12);box-shadow:0 5px 20px var(--glow)}
+.secondary-button{width:100%;padding:12px;border:1px solid var(--border);border-radius:11px;background:var(--panel2);margin-top:9px}
+.status{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5;overflow-wrap:anywhere}
+.warning{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px}
+@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes messageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{50%{transform:translateY(-8px)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:650px){
+.sidebar{position:fixed;inset:0 auto 0 0;height:100dvh;transform:translateX(-105%);transition:transform .3s;box-shadow:15px 0 50px #0006}
+.sidebar.open{transform:translateX(0)}
+.menu-button{display:block}
+.topbar{padding:0 13px}
+.input-area{padding:12px}
+.messages{padding:20px 12px}
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
+<aside class="sidebar" id="sidebar">
+    <div class="logo">
+        <div class="logo-icon">ϟ</div>
+        <div class="logo-name">Flash<span>AI</span></div>
+    </div>
+    <button class="new-chat" onclick="newChat()">＋ Новый чат</button>
+    <div class="side-label">ИСТОРИЯ</div>
+    <div class="history" id="history"></div>
+    <div class="sidebar-bottom">
+        <button class="settings-button" onclick="openSettings()">⚙ Настройки</button>
+    </div>
+</aside>
 
-    <aside class="sidebar" id="sidebar">
-        <div class="logo">
-            <div class="logo-icon">ϟ</div>
-            <div class="logo-name">Flash<span>AI</span></div>
-        </div>
-
-        <button class="new-chat" onclick="newChat()">
-            <span>＋</span> Новый чат
-        </button>
-
-        <div class="side-label">ИСТОРИЯ</div>
-        <div class="history" id="history"></div>
-
-        <div class="sidebar-bottom">
-            <button class="settings-button" onclick="openSettings()">
-                ⚙ Настройки
-            </button>
-        </div>
-    </aside>
-
-    <main class="main">
-
-        <header class="topbar">
-            <div class="top-left">
-                <button class="menu-button" onclick="toggleSidebar()">☰</button>
-                <div>
-                    <div class="chat-title" id="chatTitle">Новый чат</div>
-                    <div class="model-status">FlashAI · Интерфейс</div>
-                </div>
-            </div>
-
-            <div class="top-actions">
-                <button class="icon-button" onclick="newChat()" title="Новый чат">＋</button>
-                <button class="icon-button" onclick="openSettings()" title="Настройки">⚙</button>
-            </div>
-        </header>
-
-        <section class="messages" id="messages">
-            <div class="empty-state" id="emptyState">
-                <div class="empty-logo">ϟ</div>
-                <h1>Добро пожаловать в <span>FlashAI</span></h1>
-                <p>Твоё пространство для общения с искусственным интеллектом.</p>
-            </div>
-        </section>
-
-        <div class="input-area">
-            <div class="input-box">
-                <textarea
-                    id="messageInput"
-                    rows="1"
-                    placeholder="Напиши сообщение..."
-                    onkeydown="handleKey(event)"
-                    oninput="resizeInput(this)"
-                ></textarea>
-
-                <button class="send-button" onclick="sendMessage()" title="Отправить">
-                    ↑
-                </button>
-            </div>
-            <div class="disclaimer">
-                FlashAI · Твой персональный ИИ-интерфейс
+<main class="main">
+    <header class="topbar">
+        <div class="top-left">
+            <button class="menu-button" onclick="toggleSidebar()">☰</button>
+            <div>
+                <div class="chat-title" id="chatTitle">Новый чат</div>
+                <div class="model-status" id="modelStatus">FlashAI · Не подключено</div>
             </div>
         </div>
+        <div class="top-actions">
+            <button class="icon-button" onclick="newChat()">＋</button>
+            <button class="icon-button" onclick="openSettings()">⚙</button>
+        </div>
+    </header>
 
-    </main>
+    <section class="messages" id="messages">
+        <div class="empty-state">
+            <div class="empty-logo">ϟ</div>
+            <h1>Добро пожаловать в <span>FlashAI</span></h1>
+            <p>Твоё пространство для общения с искусственным интеллектом.</p>
+        </div>
+    </section>
+
+    <div class="input-area">
+        <div class="input-box">
+            <textarea id="messageInput" rows="1" placeholder="Напиши сообщение..." onkeydown="handleKey(event)" oninput="resizeInput(this)"></textarea>
+            <button class="send-button" id="sendButton" onclick="sendMessage()">↑</button>
+        </div>
+        <div class="disclaimer">FlashAI · Твой персональный ИИ-интерфейс</div>
+    </div>
+</main>
 </div>
 
-<!-- SETTINGS -->
-
 <div class="overlay" id="settingsOverlay" onclick="overlayClick(event)">
-    <div class="modal">
-        <div class="modal-header">
-            <h2>Настройки</h2>
-            <button class="close-button" onclick="closeSettings()">×</button>
-        </div>
-
-        <div class="setting-title">Цветовая тема</div>
-
-        <div class="themes">
-
-            <button class="theme-option theme-green" onclick="setTheme('green')">
-                <div class="theme-preview"></div>
-                <span>Зелёный / Фиолетовый</span>
-            </button>
-
-            <button class="theme-option theme-blue" onclick="setTheme('blue')">
-                <div class="theme-preview"></div>
-                <span>Синий / Фиолетовый</span>
-            </button>
-
-            <button class="theme-option theme-red" onclick="setTheme('red')">
-                <div class="theme-preview"></div>
-                <span>Красный / Оранжевый</span>
-            </button>
-
-            <button class="theme-option theme-gray" onclick="setTheme('gray')">
-                <div class="theme-preview"></div>
-                <span>Чёрный / Серый</span>
-            </button>
-
-        </div>
-
-        <div class="setting-title">Информация</div>
-        <p class="setting-note">
-            FlashAI — интерфейс для подключения различных ИИ API.
-            Подключение моделей появится в следующем обновлении.
-        </p>
+<div class="modal">
+    <div class="modal-header">
+        <h2>Настройки</h2>
+        <button class="close-button" onclick="closeSettings()">×</button>
     </div>
+
+    <div class="section-title">Цветовая тема</div>
+    <div class="themes">
+        <button class="theme-option theme-green" onclick="setTheme('green')"><div class="theme-preview"></div><span>Зелёный / Фиолетовый</span></button>
+        <button class="theme-option theme-blue" onclick="setTheme('blue')"><div class="theme-preview"></div><span>Синий / Фиолетовый</span></button>
+        <button class="theme-option theme-red" onclick="setTheme('red')"><div class="theme-preview"></div><span>Красный / Оранжевый</span></button>
+        <button class="theme-option theme-gray" onclick="setTheme('gray')"><div class="theme-preview"></div><span>Чёрный / Серый</span></button>
+    </div>
+
+    <div class="section-title">Подключение ИИ</div>
+
+    <label class="field-label" for="provider">Провайдер</label>
+    <select class="field" id="provider" onchange="providerChanged()">
+        <option value="openai">OpenAI</option>
+        <option value="gemini">Google Gemini</option>
+        <option value="grok">Grok (xAI)</option>
+        <option value="claude">Claude (Anthropic)</option>
+        <option value="deepseek">DeepSeek</option>
+        <option value="custom">Custom API (OpenAI-compatible)</option>
+        <option value="flash">Flash Plugin API</option>
+    </select>
+
+    <label class="field-label" for="apiUrl">API URL</label>
+    <input class="field" id="apiUrl" placeholder="Адрес API">
+
+    <label class="field-label" for="apiKey">API Key</label>
+    <input class="field" id="apiKey" type="password" placeholder="Вставь API-ключ">
+
+    <label class="field-label" for="model">Модель</label>
+    <input class="field" id="model" placeholder="Например, название модели">
+
+    <button class="primary-button" onclick="saveSettings()">Сохранить настройки</button>
+    <button class="secondary-button" onclick="testConnection()">Проверить подключение</button>
+    <div class="status" id="connectionStatus">Выбери провайдера и введи данные API.</div>
+
+    <p class="warning">
+        Внимание: в этой версии ключ сохраняется в памяти браузера. Не используй здесь ключи с важными правами или большими лимитами. Для публичного приложения потребуется защищённый сервер-посредник.
+    </p>
+</div>
 </div>
 
 <script>
 const themes = {
-    green: {
-        accent: "#00bd86",
-        accent2: "#934cff",
-        glow: "rgba(0,189,134,.22)"
-    },
-    blue: {
-        accent: "#287cff",
-        accent2: "#994bff",
-        glow: "rgba(40,124,255,.25)"
-    },
-    red: {
-        accent: "#ff4242",
-        accent2: "#ff9b38",
-        glow: "rgba(255,66,66,.23)"
-    },
-    gray: {
-        accent: "#777777",
-        accent2: "#c2c2c2",
-        glow: "rgba(180,180,180,.18)"
-    }
+    green:{a:"#00bd86",b:"#934cff",g:"rgba(0,189,134,.22)"},
+    blue:{a:"#287cff",b:"#994bff",g:"rgba(40,124,255,.25)"},
+    red:{a:"#ff4242",b:"#ff9b38",g:"rgba(255,66,66,.23)"},
+    gray:{a:"#777777",b:"#c2c2c2",g:"rgba(180,180,180,.18)"}
+};
+
+const defaults = {
+    openai:{url:"https://api.openai.com/v1/chat/completions",model:""},
+    gemini:{url:"https://generativelanguage.googleapis.com",model:""},
+    grok:{url:"https://api.x.ai/v1/chat/completions",model:""},
+    claude:{url:"https://api.anthropic.com",model:""},
+    deepseek:{url:"https://api.deepseek.com/chat/completions",model:""},
+    custom:{url:"",model:""},
+    flash:{url:"https://flash-plugin-api.onrender.com",model:""}
 };
 
 let chats = JSON.parse(localStorage.getItem("flash_chats") || "[]");
 let activeChat = null;
+let settings = JSON.parse(localStorage.getItem("flash_settings") || "{}");
+let busy = false;
 
-function saveChats() {
-    localStorage.setItem("flash_chats", JSON.stringify(chats));
+function setTheme(name){
+    const t=themes[name];
+    if(!t)return;
+    document.documentElement.style.setProperty("--accent",t.a);
+    document.documentElement.style.setProperty("--accent2",t.b);
+    document.documentElement.style.setProperty("--glow",t.g);
+    localStorage.setItem("flash_theme",name);
+    document.querySelectorAll(".theme-option").forEach(x=>x.classList.remove("selected"));
+    document.querySelector(".theme-"+name).classList.add("selected");
 }
 
-function setTheme(name) {
-    const theme = themes[name];
-    if (!theme) return;
+function loadTheme(){setTheme(localStorage.getItem("flash_theme")||"blue")}
 
-    document.documentElement.style.setProperty("--accent", theme.accent);
-    document.documentElement.style.setProperty("--accent2", theme.accent2);
-    document.documentElement.style.setProperty("--glow", theme.glow);
-
-    localStorage.setItem("flash_theme", name);
-
-    document.querySelectorAll(".theme-option").forEach(button => {
-        button.classList.remove("selected");
-    });
-
-    document.querySelector(".theme-" + name).classList.add("selected");
-}
-
-function loadTheme() {
-    const saved = localStorage.getItem("flash_theme") || "blue";
-    setTheme(saved);
-}
-
-function openSettings() {
+function openSettings(){
     document.getElementById("settingsOverlay").classList.add("show");
+    loadSettingsForm();
+}
+function closeSettings(){document.getElementById("settingsOverlay").classList.remove("show")}
+function overlayClick(e){if(e.target.id==="settingsOverlay")closeSettings()}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open")}
+
+function providerChanged(){
+    const p=document.getElementById("provider").value;
+    const d=defaults[p];
+    document.getElementById("apiUrl").value=d.url;
+    document.getElementById("model").value=d.model;
+    document.getElementById("connectionStatus").textContent=
+        p==="flash"
+        ?"У Flash Plugin API пока нет метода генерации ответов. Сначала добавим его на сервере."
+        :"Введи API-ключ и название модели.";
 }
 
-function closeSettings() {
-    document.getElementById("settingsOverlay").classList.remove("show");
+function loadSettingsForm(){
+    const p=settings.provider||"openai";
+    document.getElementById("provider").value=p;
+    document.getElementById("apiUrl").value=settings.url||defaults[p].url;
+    document.getElementById("apiKey").value=settings.key||"";
+    document.getElementById("model").value=settings.model||"";
+    document.getElementById("connectionStatus").textContent=
+        settings.key?"Настройки загружены.":"Выбери провайдера и введи данные API.";
 }
 
-function overlayClick(event) {
-    if (event.target.id === "settingsOverlay") closeSettings();
-}
-
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("open");
-}
-
-function newChat() {
-    activeChat = {
-        id: Date.now(),
-        title: "Новый чат",
-        messages: []
+function saveSettings(){
+    settings={
+        provider:document.getElementById("provider").value,
+        url:document.getElementById("apiUrl").value.trim(),
+        key:document.getElementById("apiKey").value.trim(),
+        model:document.getElementById("model").value.trim()
     };
+    localStorage.setItem("flash_settings",JSON.stringify(settings));
+    updateModelStatus();
+    document.getElementById("connectionStatus").textContent="Настройки сохранены.";
+}
 
+function updateModelStatus(){
+    const names={openai:"OpenAI",gemini:"Gemini",grok:"Grok",claude:"Claude",deepseek:"DeepSeek",custom:"Custom API",flash:"Flash Plugin API"};
+    document.getElementById("modelStatus").textContent=
+        settings.key ? names[settings.provider]+" · "+(settings.model||"Модель не указана") : "FlashAI · Не подключено";
+}
+
+function newChat(){
+    activeChat={id:Date.now(),title:"Новый чат",messages:[]};
     chats.unshift(activeChat);
-    saveChats();
-    renderChat();
-    renderHistory();
-
+    saveChats();renderChat();renderHistory();
     document.getElementById("sidebar").classList.remove("open");
     document.getElementById("messageInput").focus();
 }
 
-function renderHistory() {
-    const container = document.getElementById("history");
-    container.innerHTML = "";
+function saveChats(){localStorage.setItem("flash_chats",JSON.stringify(chats))}
 
-    chats.forEach(chat => {
-        const button = document.createElement("button");
-        button.className = "history-item" +
-            (activeChat && activeChat.id === chat.id ? " active" : "");
-
-        button.textContent = chat.title;
-        button.onclick = () => openChat(chat.id);
-
-        container.appendChild(button);
+function renderHistory(){
+    const el=document.getElementById("history");
+    el.innerHTML="";
+    chats.forEach(c=>{
+        const b=document.createElement("button");
+        b.className="history-item"+(activeChat&&activeChat.id===c.id?" active":"");
+        b.textContent=c.title;
+        b.onclick=()=>openChat(c.id);
+        el.appendChild(b);
     });
 }
 
-function openChat(id) {
-    activeChat = chats.find(chat => chat.id === id);
-    renderChat();
-    renderHistory();
+function openChat(id){
+    activeChat=chats.find(c=>c.id===id);
+    renderChat();renderHistory();
     document.getElementById("sidebar").classList.remove("open");
 }
 
-function renderChat() {
-    const container = document.getElementById("messages");
-    const title = document.getElementById("chatTitle");
+function renderChat(){
+    const el=document.getElementById("messages");
+    el.innerHTML="";
+    if(!activeChat||!activeChat.messages.length){
+        el.innerHTML='<div class="empty-state"><div class="empty-logo">ϟ</div><h1>Добро пожаловать в <span>FlashAI</span></h1><p>Твоё пространство для общения с искусственным интеллектом.</p></div>';
+        document.getElementById("chatTitle").textContent="Новый чат";
+        return;
+    }
+    document.getElementById("chatTitle").textContent=activeChat.title;
+    activeChat.messages.forEach(m=>addMessageElement(m.role,m.text));
+    el.scrollTop=el.scrollHeight;
+}
 
-    container.innerHTML = "";
+function addMessageElement(role,text){
+    const el=document.getElementById("messages");
+    const wrap=document.createElement("div");
+    wrap.className="message "+role;
+    if(role==="assistant"){
+        const label=document.createElement("div");
+        label.className="message-label";
+        label.textContent="FlashAI";
+        wrap.appendChild(label);
+    }
+    const bubble=document.createElement("div");
+    bubble.className="bubble";
+    bubble.textContent=text;
+    wrap.appendChild(bubble);
+    el.appendChild(wrap);
+    el.scrollTop=el.scrollHeight;
+}
 
-    if (!activeChat || activeChat.messages.length === 0) {
-        title.textContent = "Новый чат";
+function handleKey(e){
+    if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}
+}
+function resizeInput(el){el.style.height="auto";el.style.height=Math.min(el.scrollHeight,140)+"px"}
 
-        container.innerHTML = `
-            <div class="empty-state" id="emptyState">
-                <div class="empty-logo">ϟ</div>
-                <h1>Добро пожаловать в <span>FlashAI</span></h1>
-                <p>Твоё пространство для общения с искусственным интеллектом.</p>
-            </div>
-        `;
+function getEndpoint(){
+    const p=settings.provider;
+    let url=settings.url.trim().replace(/\/+$/,"");
+    if(p==="openai"||p==="grok"||p==="deepseek"||p==="custom"){
+        if(!url.endsWith("/chat/completions"))url+="/chat/completions";
+    }
+    if(p==="claude"&&!url.endsWith("/v1/messages"))url+="/v1/messages";
+    return url;
+}
+
+function getConversation(){
+    return activeChat.messages.map(m=>({role:m.role,content:m.text}));
+}
+
+async function requestAI(history){
+    const p=settings.provider;
+    const key=settings.key;
+    const model=settings.model;
+    if(!key)throw new Error("Сначала добавь API-ключ в настройках.");
+    if(!model)throw new Error("Укажи название модели в настройках.");
+    if(p==="flash")throw new Error("Flash Plugin API пока не поддерживает генерацию ответов. Для него нужно добавить chat endpoint на сервер.");
+
+    if(p==="gemini"){
+        const contents=history.map(m=>({
+            role:m.role==="assistant"?"model":"user",
+            parts:[{text:m.content}]
+        }));
+        const url="https://generativelanguage.googleapis.com/v1beta/models/"+
+            encodeURIComponent(model)+":generateContent?key="+encodeURIComponent(key);
+        const response=await fetch(url,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({contents})
+        });
+        const data=await response.json();
+        if(!response.ok)throw new Error(data.error?.message||"Gemini API error");
+        return data.candidates?.[0]?.content?.parts?.map(x=>x.text||"").join("")||"Пустой ответ модели.";
+    }
+
+    if(p==="claude"){
+        const response=await fetch(getEndpoint(),{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "x-api-key":key,
+                "anthropic-version":"2023-06-01",
+                "anthropic-dangerous-direct-browser-access":"true"
+            },
+            body:JSON.stringify({
+                model,
+                max_tokens:2048,
+                messages:history.map(m=>({role:m.role==="assistant"?"assistant":"user",content:m.content}))
+            })
+        });
+        const data=await response.json();
+        if(!response.ok)throw new Error(data.error?.message||"Claude API error");
+        return data.content?.filter(x=>x.type==="text").map(x=>x.text).join("")||"Пустой ответ модели.";
+    }
+
+    const response=await fetch(getEndpoint(),{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+key
+        },
+        body:JSON.stringify({
+            model,
+            messages:history,
+            stream:false
+        })
+    });
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error?.message||data.message||"API error");
+    return data.choices?.[0]?.message?.content||"Пустой ответ модели.";
+}
+
+async function sendMessage(){
+    if(busy)return;
+    const input=document.getElementById("messageInput");
+    const text=input.value.trim();
+    if(!text)return;
+
+    if(!activeChat)newChat();
+
+    activeChat.messages.push({role:"user",text});
+    if(activeChat.messages.length===1){
+        activeChat.title=text.length>27?text.slice(0,27)+"...":text;
+    }
+
+    input.value="";
+    input.style.height="auto";
+    saveChats();renderChat();renderHistory();
+
+    if(!settings.key){
+        addMessageElement("assistant","Сначала открой настройки и подключи API.");
         return;
     }
 
-    title.textContent = activeChat.title;
+    busy=true;
+    document.getElementById("sendButton").disabled=true;
+    addMessageElement("assistant","Думаю...");
 
-    activeChat.messages.forEach(message => {
-        addMessageElement(message.role, message.text);
-    });
-
-    container.scrollTop = container.scrollHeight;
-}
-
-function addMessageElement(role, text) {
-    const container = document.getElementById("messages");
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "message " + role;
-
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.textContent = text;
-
-    if (role === "assistant") {
-        const label = document.createElement("div");
-        label.className = "message-label";
-        label.textContent = "FlashAI";
-        wrapper.appendChild(label);
+    try{
+        const answer=await requestAI(getConversation());
+        activeChat.messages.push({role:"assistant",text:answer});
+    }catch(error){
+        activeChat.messages.push({role:"assistant",text:"Ошибка подключения: "+error.message});
     }
 
-    wrapper.appendChild(bubble);
-    container.appendChild(wrapper);
+    busy=false;
+    document.getElementById("sendButton").disabled=false;
+    saveChats();renderChat();
 }
 
-function sendMessage() {
-    const input = document.getElementById("messageInput");
-    const text = input.value.trim();
-
-    if (!text) return;
-
-    if (!activeChat) {
-        newChat();
+async function testConnection(){
+    saveSettings();
+    const status=document.getElementById("connectionStatus");
+    status.textContent="Проверяю подключение...";
+    try{
+        const answer=await requestAI([{role:"user",content:"Ответь одним словом: OK"}]);
+        status.textContent="Подключение успешно. Ответ: "+answer.slice(0,120);
+    }catch(e){
+        status.textContent="Ошибка: "+e.message;
     }
-
-    activeChat.messages.push({
-        role: "user",
-        text: text
-    });
-
-    if (activeChat.messages.length === 1) {
-        activeChat.title = text.length > 27
-            ? text.slice(0, 27) + "..."
-            : text;
-    }
-
-    input.value = "";
-    input.style.height = "auto";
-
-    saveChats();
-    renderChat();
-    renderHistory();
-}
-
-function handleKey(event) {
-    if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage();
-    }
-}
-
-function resizeInput(element) {
-    element.style.height = "auto";
-    element.style.height = Math.min(element.scrollHeight, 140) + "px";
 }
 
 loadTheme();
+loadSettingsForm();
 renderHistory();
 renderChat();
+updateModelStatus();
 </script>
-
 </body>
-  </html>
+            </html>
