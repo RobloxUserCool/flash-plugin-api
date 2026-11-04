@@ -175,13 +175,13 @@ button{cursor:pointer;color:inherit}
 
     <label class="field-label" for="provider">Провайдер</label>
     <select class="field" id="provider" onchange="providerChanged()">
+        <option value="flash">Flash Plugin API</option>
         <option value="openai">OpenAI</option>
         <option value="gemini">Google Gemini</option>
         <option value="grok">Grok (xAI)</option>
         <option value="claude">Claude (Anthropic)</option>
         <option value="deepseek">DeepSeek</option>
         <option value="custom">Custom API (OpenAI-compatible)</option>
-        <option value="flash">Flash Plugin API</option>
     </select>
 
     <label class="field-label" for="apiUrl">API URL</label>
@@ -198,7 +198,7 @@ button{cursor:pointer;color:inherit}
     <div class="status" id="connectionStatus">Выбери провайдера и введи данные API.</div>
 
     <p class="warning">
-        Внимание: в этой версии ключ сохраняется в памяти браузера. Не используй здесь ключи с важными правами или большими лимитами. Для публичного приложения потребуется защищённый сервер-посредник.
+        Flash Plugin API использует собственный движок. Для остальных провайдеров ключ сохраняется в памяти браузера. Не используй здесь ключи с важными правами или большими лимитами.
     </p>
 </div>
 </div>
@@ -218,7 +218,7 @@ const defaults = {
     claude:{url:"https://api.anthropic.com",model:""},
     deepseek:{url:"https://api.deepseek.com/chat/completions",model:""},
     custom:{url:"",model:""},
-    flash:{url:"https://flash-plugin-api.onrender.com",model:""}
+    flash:{url:"https://flash-plugin-api.onrender.com",model:"Flash AI Engine"}
 };
 
 let chats = JSON.parse(localStorage.getItem("flash_chats") || "[]");
@@ -254,18 +254,18 @@ function providerChanged(){
     document.getElementById("model").value=d.model;
     document.getElementById("connectionStatus").textContent=
         p==="flash"
-        ?"У Flash Plugin API пока нет метода генерации ответов. Сначала добавим его на сервере."
+        ?"Собственный Flash AI Engine. Нужен действующий flash_ ключ."
         :"Введи API-ключ и название модели.";
 }
 
 function loadSettingsForm(){
-    const p=settings.provider||"openai";
+    const p=settings.provider||"flash";
     document.getElementById("provider").value=p;
     document.getElementById("apiUrl").value=settings.url||defaults[p].url;
     document.getElementById("apiKey").value=settings.key||"";
-    document.getElementById("model").value=settings.model||"";
+    document.getElementById("model").value=settings.model||defaults[p].model;
     document.getElementById("connectionStatus").textContent=
-        settings.key?"Настройки загружены.":"Выбери провайдера и введи данные API.";
+        settings.key?"Настройки загружены.":"Вставь Flash API-ключ.";
 }
 
 function saveSettings(){
@@ -281,9 +281,9 @@ function saveSettings(){
 }
 
 function updateModelStatus(){
-    const names={openai:"OpenAI",gemini:"Gemini",grok:"Grok",claude:"Claude",deepseek:"DeepSeek",custom:"Custom API",flash:"Flash Plugin API"};
+    const names={openai:"OpenAI",gemini:"Gemini",grok:"Grok",claude:"Claude",deepseek:"DeepSeek",custom:"Custom API",flash:"Flash AI Engine"};
     document.getElementById("modelStatus").textContent=
-        settings.key ? names[settings.provider]+" · "+(settings.model||"Модель не указана") : "FlashAI · Не подключено";
+        settings.key ? names[settings.provider]+" · "+(settings.provider==="flash"?"Собственный движок":(settings.model||"Модель не указана")) : "FlashAI · Не подключено";
 }
 
 function newChat(){
@@ -368,9 +368,38 @@ async function requestAI(history){
     const p=settings.provider;
     const key=settings.key;
     const model=settings.model;
+
     if(!key)throw new Error("Сначала добавь API-ключ в настройках.");
+
+    // Собственный Flash AI Engine
+    if(p==="flash"){
+        const baseUrl=(settings.url||defaults.flash.url).trim().replace(/\/+$/,"");
+
+        const response=await fetch(baseUrl+"/api/chat",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "x-api-key":key
+            },
+            body:JSON.stringify({
+                messages:history
+            })
+        });
+
+        const data=await response.json();
+
+        if(!response.ok){
+            throw new Error(data.error||"Ошибка Flash Plugin API: "+response.status);
+        }
+
+        if(!data.reply){
+            throw new Error("Flash AI вернул пустой ответ.");
+        }
+
+        return data.reply;
+    }
+
     if(!model)throw new Error("Укажи название модели в настройках.");
-    if(p==="flash")throw new Error("Flash Plugin API пока не поддерживает генерацию ответов. Для него нужно добавить chat endpoint на сервер.");
 
     if(p==="gemini"){
         const contents=history.map(m=>({
@@ -444,7 +473,7 @@ async function sendMessage(){
     saveChats();renderChat();renderHistory();
 
     if(!settings.key){
-        addMessageElement("assistant","Сначала открой настройки и подключи API.");
+        addMessageElement("assistant","Сначала открой настройки и вставь API-ключ.");
         return;
     }
 
@@ -483,4 +512,4 @@ renderChat();
 updateModelStatus();
 </script>
 </body>
-            </html>
+    </html>
