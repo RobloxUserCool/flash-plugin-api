@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import crypto from "crypto";
 import pg from "pg";
+import path from "node:path";
 
 const { Pool } = pg;
 const app = express();
@@ -14,6 +15,20 @@ const pool = new Pool({
   ssl: process.env.DATABASE_URL
     ? { rejectUnauthorized: false }
     : false
+});
+
+// DASHBOARD
+const dashboardPath = path.resolve("dashboard.html");
+
+app.get(["/dashboard", "/dashboard.html"], (req, res) => {
+  res.sendFile(dashboardPath, (error) => {
+    if (error) {
+      console.error("Dashboard error:", error);
+      if (!res.headersSent) {
+        res.status(404).send("Dashboard not found");
+      }
+    }
+  });
 });
 
 async function initDatabase() {
