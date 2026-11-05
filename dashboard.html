@@ -6,82 +6,418 @@
 <title>Flash Plugin API</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --blue: #4388ff;
+    --purple: #9255ff;
+    --bg: #070a14;
+    --panel: rgba(17, 23, 42, .78);
+    --text: #f4f6ff;
+    --muted: #8994ad;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
+    min-height: 100vh;
     padding: 25px;
-    background: #090d19;
-    color: white;
-    font-family: Arial, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(ellipse at 15% 10%, rgba(42, 93, 255, .17), transparent 40%),
+        radial-gradient(ellipse at 90% 80%, rgba(139, 55, 255, .15), transparent 40%),
+        var(--bg);
+    font-family: Inter, Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .15;
+    background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 45px 45px;
+    mask-image: linear-gradient(to bottom, black, transparent);
 }
 
 .container {
-    max-width: 650px;
-    margin: 50px auto;
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 65px auto;
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 45px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.logo {
+    width: 45px;
+    height: 45px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 21px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #368cff, #984cff);
+    box-shadow: 0 0 30px rgba(87, 105, 255, .35);
+}
+
+.brand-name {
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: -.5px;
+}
+
+.brand-small {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.online {
+    color: #66e6b0;
+    font-size: 11px;
+    border: 1px solid rgba(75, 220, 160, .2);
+    background: rgba(45, 200, 140, .08);
+    border-radius: 30px;
+    padding: 9px 13px;
+}
+
+.online::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #53e5a7;
+    margin-right: 7px;
+    box-shadow: 0 0 10px #53e5a7;
+}
+
+.heading {
+    margin-bottom: 30px;
+    animation: appear .8s ease both;
+}
+
+.eyebrow {
+    color: #8a9eff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 15px;
 }
 
 h1 {
-    font-size: 30px;
+    font-size: clamp(32px, 7vw, 49px);
+    line-height: 1.1;
+    letter-spacing: -2px;
+    margin: 0;
+}
+
+.gradient {
+    background: linear-gradient(100deg, #70aaff, #a77aff, #6bcbff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
 .subtitle {
-    color: #929bb2;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 15px;
 }
 
 .panel {
-    background: #121a2c;
-    border: 1px solid #25334f;
-    border-radius: 18px;
-    padding: 24px;
-    margin-top: 25px;
+    position: relative;
+    overflow: hidden;
+    padding: 28px;
+    margin-top: 20px;
+    border-radius: 23px;
+    background: var(--panel);
+    border: 1px solid rgba(132, 158, 220, .14);
+    box-shadow: 0 20px 70px rgba(0,0,0,.22);
+    backdrop-filter: blur(18px);
+    animation: appear .8s ease both;
 }
 
-button {
+.panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 15%;
+    width: 70%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #719dff, #a36cff, transparent);
+    opacity: .65;
+}
+
+.panel-title {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.description {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 12px 0 25px;
+}
+
+.generate {
+    position: relative;
+    overflow: hidden;
     width: 100%;
-    padding: 16px;
-    border: 0;
-    border-radius: 12px;
-    background: linear-gradient(100deg, #2878ff, #884bff);
+    padding: 17px;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 13px;
     color: white;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .3px;
     cursor: pointer;
+    background: linear-gradient(105deg, #287bff, #7551ed, #a044ef);
+    background-size: 200% 200%;
+    box-shadow: 0 8px 30px rgba(75, 90, 255, .24);
+    transition: transform .25s, box-shadow .25s, filter .25s;
+    animation: gradientMove 5s ease infinite;
 }
 
-button:disabled {
-    opacity: .6;
+.generate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 38px rgba(100, 90, 255, .4);
+    filter: brightness(1.12);
+}
+
+.generate:active {
+    transform: scale(.98);
+}
+
+.generate:disabled {
+    opacity: .7;
+    cursor: wait;
+    transform: none;
+}
+
+.generate::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 50%;
+    height: 200%;
+    transform: rotate(25deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+    animation: shine 4s infinite;
+}
+
+.scanner {
+    display: none;
+    position: relative;
+    height: 105px;
+    margin-top: 23px;
+    overflow: hidden;
+    border: 1px solid rgba(91, 130, 255, .2);
+    border-radius: 13px;
+    background: rgba(29, 44, 83, .2);
+}
+
+.scanner.active {
+    display: block;
+    animation: appear .4s ease;
+}
+
+.scan-line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #60a8ff, #b18aff, transparent);
+    box-shadow: 0 0 18px #6d8fff;
+    animation: scan 1.5s linear infinite;
+}
+
+.scan-text {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #a8baff;
+    font-size: 11px;
+    letter-spacing: 2px;
 }
 
 .key {
-    margin-top: 20px;
-    padding: 15px;
-    background: #080e1c;
-    border: 1px solid #293955;
-    border-radius: 10px;
-    overflow-wrap: anywhere;
-    color: #83b4ff;
     display: none;
+    margin-top: 22px;
+    padding: 19px;
+    border: 1px solid rgba(99, 145, 255, .3);
+    border-radius: 14px;
+    background: linear-gradient(120deg, rgba(36, 75, 145, .16), rgba(108, 64, 160, .12));
+    animation: keyAppear .7s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.key.visible {
+    display: block;
+}
+
+.key-label {
+    color: #9caed0;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.key-value {
+    color: #9cc5ff;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    text-shadow: 0 0 15px rgba(75, 150, 255, .3);
 }
 
 .copy {
-    margin-top: 12px;
-    background: #263550;
     display: none;
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border: 1px solid rgba(120, 150, 220, .18);
+    border-radius: 12px;
+    background: rgba(91, 115, 170, .13);
+    color: #cbd9ff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.copy.visible {
+    display: block;
+}
+
+.copy:hover {
+    background: rgba(100, 130, 210, .25);
+    border-color: rgba(130, 160, 255, .4);
 }
 
 .status {
-    margin-top: 15px;
-    color: #929bb2;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 20px;
+    color: #8f9ab2;
+    font-size: 12px;
+    min-height: 18px;
 }
 
-.info {
-    color: #8995ad;
+.status-dot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #7184ad;
+}
+
+.status.success .status-dot {
+    background: #56e5a5;
+    box-shadow: 0 0 12px #56e5a5;
+}
+
+.status.error .status-dot {
+    background: #ff6b86;
+    box-shadow: 0 0 12px #ff6b86;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.info-item {
+    padding: 16px;
+    border-radius: 13px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.055);
+}
+
+.info-label {
+    color: #7f8ba6;
+    font-size: 10px;
+    margin-bottom: 8px;
+}
+
+.info-value {
     font-size: 13px;
-    line-height: 1.6;
+    font-weight: 600;
+}
+
+.footer {
+    text-align: center;
+    color: #505b75;
+    font-size: 11px;
+    margin-top: 35px;
+}
+
+@keyframes scan {
+    from { transform: translateY(0); }
+    to { transform: translateY(105px); }
+}
+
+@keyframes shine {
+    0%, 65% { left: -100%; }
+    90%, 100% { left: 150%; }
+}
+
+@keyframes gradientMove {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes appear {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes keyAppear {
+    from { opacity: 0; transform: translateY(15px) scale(.97); filter: blur(5px); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@media (max-width: 520px) {
+    body { padding: 18px; }
+    .container { margin: 25px auto; }
+    .panel { padding: 21px; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
 }
 </style>
 </head>
@@ -90,39 +426,98 @@ button:disabled {
 
 <div class="container">
 
-<h1>Flash Plugin API</h1>
-<p class="subtitle">API Key Management</p>
+    <header class="top">
+        <div class="brand">
+            <div class="logo">F</div>
+            <div>
+                <div class="brand-name">FLASH API</div>
+                <div class="brand-small">DEVELOPER CONSOLE</div>
+            </div>
+        </div>
 
-<div class="panel">
+        <div class="online">SYSTEM ONLINE</div>
+    </header>
 
-<h2>Generate API Key</h2>
+    <section class="heading">
+        <div class="eyebrow">FLASH PLUGIN API / CONTROL CENTER</div>
+        <h1>Build something<br><span class="gradient">extraordinary.</span></h1>
+        <p class="subtitle">
+            Управляй доступом к API и создавай уникальные ключи
+            для своих приложений.
+        </p>
+    </section>
 
-<p class="info">
-Create a unique API key for your application.
-Keep your key private.
-</p>
+    <section class="panel">
 
-<button id="generate" onclick="generateKey()">
-Generate API Key
-</button>
+        <h2 class="panel-title">Генератор API-ключей</h2>
 
-<div class="key" id="key"></div>
+        <p class="description">
+            Создай новый уникальный ключ доступа.
+            Храни его в безопасном месте и не передавай посторонним.
+        </p>
 
-<button class="copy" id="copy" onclick="copyKey()">
-Copy API Key
-</button>
+        <button class="generate" id="generate" onclick="generateKey()">
+            GENERATE ACCESS KEY
+        </button>
 
-<div class="status" id="status">System ready</div>
+        <div class="scanner" id="scanner">
+            <div class="scan-line"></div>
+            <div class="scan-text" id="scanText">
+                INITIALIZING SECURE CONNECTION
+            </div>
+        </div>
 
-</div>
+        <div class="key" id="key">
+            <div class="key-label">YOUR NEW API KEY</div>
+            <div class="key-value" id="keyValue"></div>
+        </div>
 
-<div class="panel">
-<h3>API Information</h3>
-<p class="info">Service: Flash Plugin API</p>
-<p class="info">Version: 1.0.0</p>
-<p class="info">Database: PostgreSQL</p>
-<p class="info">Authentication: API Key</p>
-</div>
+        <button class="copy" id="copy" onclick="copyKey()">
+            COPY API KEY
+        </button>
+
+        <div class="status" id="status">
+            <span class="status-dot"></span>
+            <span id="statusText">System ready. Waiting for command.</span>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h2 class="panel-title">System information</h2>
+
+        <p class="description">
+            Информация о текущей конфигурации сервиса.
+        </p>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">SERVICE</div>
+                <div class="info-value">Flash Plugin API</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">VERSION</div>
+                <div class="info-value">1.0.0</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">DATABASE</div>
+                <div class="info-value">PostgreSQL</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">AUTHENTICATION</div>
+                <div class="info-value">API Key</div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer class="footer">
+        FLASH PLUGIN API · DEVELOPER ENVIRONMENT
+    </footer>
 
 </div>
 
@@ -131,13 +526,49 @@ const API = "https://flash-plugin-api.onrender.com";
 
 let currentKey = "";
 
+const button = document.getElementById("generate");
+const scanner = document.getElementById("scanner");
+const scanText = document.getElementById("scanText");
+const keyBox = document.getElementById("key");
+const keyValue = document.getElementById("keyValue");
+const copyButton = document.getElementById("copy");
+const status = document.getElementById("status");
+const statusText = document.getElementById("statusText");
+
+function setStatus(message, type = "") {
+    status.className = "status " + type;
+    statusText.textContent = message;
+}
+
 async function generateKey() {
-    const button = document.getElementById("generate");
-    const status = document.getElementById("status");
+    if (button.disabled) return;
 
     button.disabled = true;
-    button.textContent = "Generating...";
-    status.textContent = "Connecting to API...";
+    button.textContent = "GENERATING ACCESS KEY...";
+
+    currentKey = "";
+    keyBox.classList.remove("visible");
+    copyButton.classList.remove("visible");
+
+    scanner.classList.add("active");
+
+    const stages = [
+        "INITIALIZING SECURE CONNECTION",
+        "CONNECTING TO API SERVER",
+        "REQUESTING KEY GENERATION",
+        "VERIFYING RESPONSE",
+        "FINALIZING ACCESS KEY"
+    ];
+
+    let stage = 0;
+    scanText.textContent = stages[stage];
+
+    const animation = setInterval(() => {
+        stage = (stage + 1) % stages.length;
+        scanText.textContent = stages[stage];
+    }, 650);
+
+    setStatus("Establishing connection with API...");
 
     try {
         const response = await fetch(API + "/api/keys/create", {
@@ -150,31 +581,56 @@ async function generateKey() {
             throw new Error(data.error || "Generation failed");
         }
 
+        if (!data.api_key) {
+            throw new Error("API did not return a key");
+        }
+
         currentKey = data.api_key;
 
-        document.getElementById("key").textContent = currentKey;
-        document.getElementById("key").style.display = "block";
-        document.getElementById("copy").style.display = "block";
+        clearInterval(animation);
+        scanner.classList.remove("active");
 
-        status.textContent = "API key successfully created";
+        keyValue.textContent = currentKey;
+
+        keyBox.classList.remove("visible");
+        void keyBox.offsetWidth;
+        keyBox.classList.add("visible");
+
+        copyButton.classList.add("visible");
+
+        button.textContent = "GENERATE ANOTHER KEY";
+
+        setStatus("API key successfully generated.", "success");
 
     } catch (error) {
-        status.textContent = "Error: " + error.message;
+        clearInterval(animation);
+        scanner.classList.remove("active");
+
+        setStatus("Error: " + error.message, "error");
+
+        button.textContent = "TRY AGAIN";
     }
 
     button.disabled = false;
-    button.textContent = "Generate API Key";
 }
 
 async function copyKey() {
     if (!currentKey) return;
 
-    await navigator.clipboard.writeText(currentKey);
+    try {
+        await navigator.clipboard.writeText(currentKey);
+        setStatus("API key copied to clipboard.", "success");
+        copyButton.textContent = "COPIED SUCCESSFULLY";
 
-    document.getElementById("status").textContent =
-        "API key copied!";
+        setTimeout(() => {
+            copyButton.textContent = "COPY API KEY";
+        }, 1800);
+
+    } catch (error) {
+        setStatus("Clipboard unavailable. Copy the key manually.", "error");
+    }
 }
 </script>
 
 </body>
-                                      </html>
+</html>
