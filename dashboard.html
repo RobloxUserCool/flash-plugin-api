@@ -213,9 +213,9 @@ h1 {
 }
 
 .generate:disabled {
-    opacity: .7;
+    opacity: 1;
     cursor: wait;
-    transform: none;
+    animation: loadingGlow 1.2s ease-in-out infinite;
 }
 
 .generate::after {
@@ -226,19 +226,43 @@ h1 {
     width: 50%;
     height: 200%;
     transform: rotate(25deg);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
     animation: shine 4s infinite;
+}
+
+.generate:disabled::after {
+    animation: loadingShine 1.2s linear infinite;
+}
+
+@keyframes loadingGlow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(66, 132, 255, .35),
+                    0 0 35px rgba(137, 76, 255, .15);
+        filter: brightness(1);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(66, 132, 255, .75),
+                    0 0 60px rgba(137, 76, 255, .4);
+        filter: brightness(1.2);
+    }
+}
+
+@keyframes loadingShine {
+    from { left: -100%; }
+    to { left: 150%; }
 }
 
 .scanner {
     display: none;
     position: relative;
-    height: 105px;
+    height: 125px;
     margin-top: 23px;
     overflow: hidden;
-    border: 1px solid rgba(91, 130, 255, .2);
+    border: 1px solid rgba(91, 130, 255, .25);
     border-radius: 13px;
-    background: rgba(29, 44, 83, .2);
+    background:
+        radial-gradient(ellipse at center, rgba(65, 100, 210, .16), transparent 70%),
+        rgba(29, 44, 83, .2);
 }
 
 .scanner.active {
@@ -259,12 +283,42 @@ h1 {
 
 .scan-text {
     position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
+    top: 27px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
     color: #a8baff;
-    font-size: 11px;
-    letter-spacing: 2px;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+}
+
+.progress-track {
+    position: absolute;
+    left: 10%;
+    bottom: 26px;
+    width: 80%;
+    height: 5px;
+    border-radius: 10px;
+    background: rgba(120, 145, 210, .15);
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #4388ff, #a45dff, #72d4ff);
+    box-shadow: 0 0 15px #7a8fff;
+    transition: width .12s linear;
+}
+
+.progress-percent {
+    position: absolute;
+    bottom: 7px;
+    right: 10%;
+    color: #8da8ff;
+    font-size: 10px;
+    font-weight: 700;
 }
 
 .key {
@@ -318,6 +372,8 @@ h1 {
 .copy:hover {
     background: rgba(100, 130, 210, .25);
     border-color: rgba(130, 160, 255, .4);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(90, 120, 255, .15);
 }
 
 .status {
@@ -382,7 +438,7 @@ h1 {
 
 @keyframes scan {
     from { transform: translateY(0); }
-    to { transform: translateY(105px); }
+    to { transform: translateY(125px); }
 }
 
 @keyframes shine {
@@ -401,8 +457,18 @@ h1 {
 }
 
 @keyframes keyAppear {
-    from { opacity: 0; transform: translateY(15px) scale(.97); filter: blur(5px); }
-    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(.97);
+        filter: blur(5px);
+        box-shadow: 0 0 0 rgba(80, 130, 255, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+        box-shadow: 0 0 30px rgba(80, 130, 255, .12);
+    }
 }
 
 @media (max-width: 520px) {
@@ -425,7 +491,6 @@ h1 {
 <body>
 
 <div class="container">
-
     <header class="top">
         <div class="brand">
             <div class="logo">F</div>
@@ -448,9 +513,7 @@ h1 {
     </section>
 
     <section class="panel">
-
         <h2 class="panel-title">Генератор API-ключей</h2>
-
         <p class="description">
             Создай новый уникальный ключ доступа.
             Храни его в безопасном месте и не передавай посторонним.
@@ -465,6 +528,10 @@ h1 {
             <div class="scan-text" id="scanText">
                 INITIALIZING SECURE CONNECTION
             </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-percent" id="progressPercent">0%</div>
         </div>
 
         <div class="key" id="key">
@@ -480,13 +547,10 @@ h1 {
             <span class="status-dot"></span>
             <span id="statusText">System ready. Waiting for command.</span>
         </div>
-
     </section>
 
     <section class="panel">
-
         <h2 class="panel-title">System information</h2>
-
         <p class="description">
             Информация о текущей конфигурации сервиса.
         </p>
@@ -496,29 +560,24 @@ h1 {
                 <div class="info-label">SERVICE</div>
                 <div class="info-value">Flash Plugin API</div>
             </div>
-
             <div class="info-item">
                 <div class="info-label">VERSION</div>
                 <div class="info-value">1.0.0</div>
             </div>
-
             <div class="info-item">
                 <div class="info-label">DATABASE</div>
                 <div class="info-value">PostgreSQL</div>
             </div>
-
             <div class="info-item">
                 <div class="info-label">AUTHENTICATION</div>
                 <div class="info-value">API Key</div>
             </div>
         </div>
-
     </section>
 
     <footer class="footer">
         FLASH PLUGIN API · DEVELOPER ENVIRONMENT
     </footer>
-
 </div>
 
 <script>
@@ -534,10 +593,16 @@ const keyValue = document.getElementById("keyValue");
 const copyButton = document.getElementById("copy");
 const status = document.getElementById("status");
 const statusText = document.getElementById("statusText");
+const progressFill = document.getElementById("progressFill");
+const progressPercent = document.getElementById("progressPercent");
 
 function setStatus(message, type = "") {
     status.className = "status " + type;
     statusText.textContent = message;
+}
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function generateKey() {
@@ -549,47 +614,85 @@ async function generateKey() {
     currentKey = "";
     keyBox.classList.remove("visible");
     copyButton.classList.remove("visible");
+    copyButton.textContent = "COPY API KEY";
 
     scanner.classList.add("active");
+    progressFill.style.width = "0%";
+    progressPercent.textContent = "0%";
 
     const stages = [
         "INITIALIZING SECURE CONNECTION",
         "CONNECTING TO API SERVER",
         "REQUESTING KEY GENERATION",
-        "VERIFYING RESPONSE",
+        "VERIFYING SERVER RESPONSE",
+        "ENCRYPTING ACCESS DATA",
         "FINALIZING ACCESS KEY"
     ];
 
-    let stage = 0;
-    scanText.textContent = stages[stage];
+    setStatus("Establishing secure connection with API...");
 
-    const animation = setInterval(() => {
+    const startTime = Date.now();
+    let stage = 0;
+    let animationFrame;
+
+    scanText.textContent = stages[0];
+
+    const stageTimer = setInterval(() => {
         stage = (stage + 1) % stages.length;
         scanText.textContent = stages[stage];
-    }, 650);
+    }, 850);
 
-    setStatus("Establishing connection with API...");
+    function updateProgress() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / 5000, 1);
+        const percent = Math.floor(progress * 100);
+
+        progressFill.style.width = percent + "%";
+        progressPercent.textContent = percent + "%";
+
+        if (progress < 1) {
+            animationFrame = requestAnimationFrame(updateProgress);
+        }
+    }
+
+    animationFrame = requestAnimationFrame(updateProgress);
 
     try {
-        const response = await fetch(API + "/api/keys/create", {
+        // Запрос к серверу начинается сразу.
+        const request = fetch(API + "/api/keys/create", {
             method: "POST"
+        }).then(async response => {
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || "Generation failed");
+            }
+
+            if (!data.api_key) {
+                throw new Error("API did not return a key");
+            }
+
+            return data.api_key;
         });
 
-        const data = await response.json();
+        // Анимация длится минимум 5 секунд.
+        const [newKey] = await Promise.all([
+            request,
+            delay(5000)
+        ]);
 
-        if (!response.ok || !data.success) {
-            throw new Error(data.error || "Generation failed");
-        }
+        currentKey = newKey;
 
-        if (!data.api_key) {
-            throw new Error("API did not return a key");
-        }
+        cancelAnimationFrame(animationFrame);
+        clearInterval(stageTimer);
 
-        currentKey = data.api_key;
+        progressFill.style.width = "100%";
+        progressPercent.textContent = "100%";
+        scanText.textContent = "ACCESS KEY SUCCESSFULLY CREATED";
 
-        clearInterval(animation);
+        await delay(250);
+
         scanner.classList.remove("active");
-
         keyValue.textContent = currentKey;
 
         keyBox.classList.remove("visible");
@@ -603,11 +706,12 @@ async function generateKey() {
         setStatus("API key successfully generated.", "success");
 
     } catch (error) {
-        clearInterval(animation);
+        cancelAnimationFrame(animationFrame);
+        clearInterval(stageTimer);
+
         scanner.classList.remove("active");
 
         setStatus("Error: " + error.message, "error");
-
         button.textContent = "TRY AGAIN";
     }
 
@@ -619,6 +723,7 @@ async function copyKey() {
 
     try {
         await navigator.clipboard.writeText(currentKey);
+
         setStatus("API key copied to clipboard.", "success");
         copyButton.textContent = "COPIED SUCCESSFULLY";
 
@@ -633,4 +738,4 @@ async function copyKey() {
 </script>
 
 </body>
-</html>
+    </html>
